@@ -132,7 +132,7 @@ class OpenAIModel(OpenAIBaseModel):
         api_type=None,
         api_base=None,
         api_version=None,
-        api_key=None,
+        api_key=os.environ['OPENAI_API_KEY'],
         engine_name=None,
         model_name=None,
         temperature=0.32,

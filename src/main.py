@@ -47,6 +47,7 @@ parser.add_argument(
         "ChatGPT",
         "GPT4",
         "Gemini",
+        "Mistral"
     ]
 )
 parser.add_argument(
