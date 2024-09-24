@@ -1,0 +1,166 @@
+________________________
+Input for knowledge base and exemplars: 
+Given a problem, provide relevant problems then identify the algorithm behind it and also explain the tutorial of the algorithm.
+# Problem:
+from typing import List
+
+
+def has_close_elements(numbers: List[float], threshold: float) -> bool:
+    """ Check if in given list of numbers, are any two numbers closer to each other than
+    given threshold.
+    >>> has_close_elements([1.0, 2.0, 3.0], 0.5)
+    False
+    >>> has_close_elements([1.0, 2.8, 3.0, 4.0, 5.0, 2.0], 0.3)
+    True
+    """
+
+
+# Exemplars:
+Recall three (03) relevant and distinct problems (different from problem mentioned above). For each problem,
+1. describe it
+2. generate Python3 code step by step to solve that problem
+3. finally generate a planning to solve that problem
+
+# Algorithm:
+
+----------------
+Important:
+Your response must follow the following xml format-
+
+<root>
+<problem>
+# Recall three (03) relevant and distinct problems (different from problem mentioned above). Write each problem in the following format.
+<description>
+# Describe the problem.
+</description>
+<code>
+# Let's think step by step to solve this problem in Python3 programming language.
+</code>
+<planning>
+# Planning to solve this problem.
+</planning>
+</problem>
+
+# similarly add more problems here...
+
+<algorithm>
+# Identify the algorithm (Brute-force, Dynamic Programming, Divide-and-conquer, Greedy, Backtracking, Recursive, Binary search, and so on) that needs to be used to solve the original problem.
+# Write a useful tutorial about the above mentioned algorithms. Provide a high level generic tutorial for solving this types of problem. Do not generate code.
+</algorithm>
+</root>
+
+Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+> /home/woongq/MapCoder/src/models/HuggingFace.py(75)prompt()
+-> 
+(Pdb) c
+
+
+________________________
+Response from knowledge base and exemplars: 
+<root>
+
+<problem>
+<description><![CDATA[
+Problem 1: Check if a given string is a palindrome. A palindrome is a word, phrase, number, or other sequence of characters that reads the same forward and backward, ignoring spaces, punctuation, and capitalization.
+]]></description>
+<code><![CDATA[
+1. Define a function called `is_palindrome(s: str) -> bool`.
+2. Initialize two variables, `left` and `right`, to 0 and the length of the string minus 1, respectively.
+3. While `left` is less than or equal to `right`, compare the characters at `left` and `right` indices. If they are not the same, return `False`.
+4. Increment `left` and decrement `right`, then repeat step 3.
+5. If all characters match, return `True`.
+]]></code>
+<planning><![CDATA[
+1. Define the problem: Given a string, determine if it reads the same forward and backward.
+2. Break the problem down: Compare characters at the beginning and end of the string, then move towards the center.
+3. Identify the base case: When `left` is greater than `right`, the comparison is complete.
+]]></planning>
+</problem>
+
+<problem>
+<description><![CDATA[
+Problem 2: Find the longest common subsequence (LCS) of two strings. An LCS is a sequence of characters that can be found in both strings, and it is a substring of both strings.
+]]></description>
+<code><![CDATA[
+1. Define a function called `lcs(s1: str, s2: str) -> str`.
+2. Create a 2D array of size `len(s1) + 1` by `len(s2) + 1`. Initialize all cells to 0.
+3. For each character in `s1`, starting from the first, and each character in `s2`, starting from the first:
+   a. Compare the current characters in both strings. If they match, set the value of the corresponding cell in the array to the value of the cell diagonally above and to the left plus 1.
+   b. If they do not match, set the value of the corresponding cell to the maximum value of the cell above and the cell to the left.
+4. After processing all characters in both strings, the value in the bottom-right cell of the array will be the length of the LCS.
+5. To find the LCS itself, start from the bottom-right cell and work your way up diagonally, adding the character from the original strings that was used to reach the current cell to a new string.
+]]></code>
+<planning><![CDATA[
+1. Define the problem: Given two strings, find the longest sequence of characters that can be found in both strings.
+2. Break the problem down: Create a 2D array to store the lengths of the LCS for different substrings, and fill it in by comparing characters in both strings.
+3. Identify the base case: When all characters in both strings have been processed, the value in the bottom-right cell of the array will be the length of the LCS.
+]]></planning>
+</problem>
+
+<problem>
+<description><![CDATA[
+Problem 3: Find the first non-repeating character in a string.
+]]></description>
+<code><![CDATA[
+1. Define a function called `first_non_repeating_char(s: str) -> str`.
+2. Create a dictionary to store the frequency of each character in the string.
+3. Iterate through the string, and for each character:
+   a. If the character is not in the dictionary, add it with a value of 1.
+   b. If the character is already in the dictionary, increment its value by 1.
+4. After processing all characters, find the key in the dictionary with a value of 1, which represents the first non-repeating character. If no such character exists, return an empty string.
+]]></code>
+<planning><![CDATA[
+1. Define the problem: Given a string, find the first character that appears only once.
+2. Break the problem down: Create a dictionary to store the frequency of each character, and iterate through the string to update the dictionary.
+3. Identify the base case: When all characters have been processed, find the character with a frequency of 1.
+]]></planning>
+</problem>
+
+<algorithm><![CDATA[
+<description><![CDATA[
+The algorithm used to solve the original problem (has_close_elements) is a variation of the Brute-force algorithm. Brute-force algorithms attempt to solve a problem by examining every possible solution until the correct one is found. In this case, the algorithm checks every pair of numbers in the list to see if they are closer than the given threshold.
+]]></description>
+<tutorial>
+1. Understand the problem: Determine what you are trying to find and what constraints you have.
+2. Break the problem down: Divide the problem into smaller, manageable subproblems.
+3. Identify the base case: Determine when the subproblems have been solved, and what the final solution will look like.
+4. Implement the algorithm: Write code to solve the subproblems and combine the solutions to find the final answer.
+5. Optimize the algorithm: If necessary, find ways to make the algorithm more efficient, such as reducing the number of subproblems or using data structures that make the algorithm faster.
+</tutorial>
+]]></algorithm>
+</root>
+Traceback (most recent call last):
+  File "/home/woongq/MapCoder/src/promptings/MapCoder.py", line 75, in parse_xml
+    root = ET.fromstring(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/woongq/anaconda3/envs/mapcoder/lib/python3.12/xml/etree/ElementTree.py", line 1335, in XML
+    parser.feed(text)
+xml.etree.ElementTree.ParseError: mismatched tag: line 63, column 5
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/woongq/MapCoder/src/promptings/MapCoder.py", line 78, in parse_xml
+    root = ET.fromstring('<root>\n' + response + '\n</root>')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/woongq/anaconda3/envs/mapcoder/lib/python3.12/xml/etree/ElementTree.py", line 1335, in XML
+    parser.feed(text)
+xml.etree.ElementTree.ParseError: mismatched tag: line 64, column 5
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/woongq/MapCoder/src/main.py", line 101, in <module>
+    strategy.run()
+  File "/home/woongq/MapCoder/src/promptings/Base.py", line 89, in run
+    response, prompt_tokens, completion_tokens = self.run_single_pass(
+                                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/woongq/MapCoder/src/promptings/MapCoder.py", line 240, in run_single_pass
+    response = self.parse_xml(response)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/woongq/MapCoder/src/promptings/MapCoder.py", line 80, in parse_xml
+    root = ET.fromstring('<root>\n' + response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/woongq/anaconda3/envs/mapcoder/lib/python3.12/xml/etree/ElementTree.py", line 1335, in XML
+    parser.feed(text)
+xml.etree.ElementTree.ParseError: mismatched tag: line 64, column 5

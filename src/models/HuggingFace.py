@@ -27,17 +27,7 @@ class HuggingFaceBaseModel(BaseModel):
     def prompt(self, processed_input: list[dict]):
         # Generate prompt text
         prompt_text = [{"role": processed_input[0]["role"], "content": processed_input[0]["content"]}] 
-        # for message in processed_input:
-        #     role = message.get('role', '')
-        #     content = message.get('content', '')
-        #     import pdb; pdb.set_trace()
-        #     if role == 'system':
-        #         prompt_text += f"System: {content}\n"
-        #     elif role == 'user':
-        #         prompt_text += f"User: {content}\n"
-        #     elif role == 'assistant':
-        #         prompt_text += f"Assistant: {content}\n"
-
+        
         # Tokenize prompt text
         # input_ids = self.tokenizer.encode(prompt_text, return_tensors='pt').to(self.device)
 
@@ -51,8 +41,6 @@ class HuggingFaceBaseModel(BaseModel):
         # Set max length
         # max_length = input_ids.size(1) + self.max_tokens
         
-        import pdb; pdb.set_trace()
-
         # Generate text
         output_ids = self.model.generate(
             **inputs,
@@ -69,9 +57,9 @@ class HuggingFaceBaseModel(BaseModel):
         total_tokens = output_ids.size(1)
         prompt_tokens = inputs['input_ids'].size(1)
         completion_tokens = total_tokens - prompt_tokens
-
+        
         # Extract response text from the assistant
-        response_text = generated_text[len(prompt_text):].strip()
+        response_text = generated_text[len(prompt_text[0]['content']):].strip()
 
         return response_text, prompt_tokens, completion_tokens
 
