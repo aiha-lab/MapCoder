@@ -45,7 +45,8 @@ class HuggingFaceBaseModel(BaseModel):
         output_ids = self.model.generate(
             **inputs,
             max_length=self.max_tokens,
-            # do_sample=True,
+            # temperature=0.9,
+            do_sample=True,
             # pad_token_id=self.tokenizer.eos_token_id,
             # eos_token_id=self.tokenizer.eos_token_id,
         )

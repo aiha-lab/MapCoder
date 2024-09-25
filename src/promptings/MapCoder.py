@@ -75,7 +75,14 @@ class MapCoder(BaseStrategy):
             root = ET.fromstring(response)
         except:
             try:
-                root = ET.fromstring('<root>\n' + response + '\n</root>')
+                start_root = response.find('<root>')
+                end_root = response.rfind('</root>') + len('</root>')
+                if start_root != -1 and end_root != -1:
+                    # <root> and </root> tags are present
+                    cleaned_response = response[start_root:end_root]
+                    root = ET.fromstring(cleaned_response)
+                else:
+                    root = ET.fromstring('<root>\n' + response + '\n</root>')
             except:
                 root = ET.fromstring('<root>\n' + response)
         return self.xml_to_dict(root)
@@ -183,7 +190,7 @@ Recall {mapping[self.k]} relevant and distinct problems (different from problem 
 
 ----------------
 Important:
-Your response must follow the following xml format-
+Your response must follow the following xml format - (there should be nothing outside the root tag)
 
 <root>
 <problem>
@@ -195,7 +202,7 @@ Your response must follow the following xml format-
 # Let's think step by step to solve this problem in {self.language} programming language.
 </code>
 <planning>
-# Planning to solve this problem.
+# Planning to solve this problem. Make sure the tags are closed properly.
 </planning>
 </problem>
 
@@ -204,6 +211,7 @@ Your response must follow the following xml format-
 <algorithm>
 # Identify the algorithm (Brute-force, Dynamic Programming, Divide-and-conquer, Greedy, Backtracking, Recursive, Binary search, and so on) that needs to be used to solve the original problem.
 # Write a useful tutorial about the above mentioned algorithms. Provide a high level generic tutorial for solving this types of problem. Do not generate code.
+# Do not add other tags inside the algorithm tag.
 </algorithm>
 </root>
 """,
@@ -236,10 +244,15 @@ Your response must follow the following xml format-
         print("\n\n________________________")
         print("Response from knowledge base and exemplars: ")
         print(response, flush=True)
-
+        
         response = self.parse_xml(response)
 
-        algorithm_prompt = f"## Relevant Algorithm to solve the next problem:\n{ response['algorithm']}"
+        if 'algorithm' in response:
+            algorithm_prompt = f"## Relevant Algorithm to solve the next problem:\n{response['algorithm']}"
+        elif 'root' in response and 'algorithm' in response['root']:
+            algorithm_prompt = f"## Relevant Algorithm to solve the next problem:\n{response['root']['algorithm']}"
+        # else:
+            # algorithm_prompt = ""
         sample_io_prompt = f"## Sample Test cases: \n{self.get_sample_io_str(item['sample_io'])}\n"
         # if type(self.data) != MBPPDataset and type(self.data) != XCodeDataset else ""
 
@@ -299,8 +312,14 @@ Your response must follow the following xml format-
 
             verification_res = self.parse_xml(verification_res)
 
-            verification_res['confidence'] = int(
-                str(verification_res['confidence']).strip())
+            if 'confidence' in verification_res:
+                verification_res['confidence'] = int(str(verification_res['confidence']).strip())
+            elif 'root' in verification_res and 'confidence' in verification_res['root']:
+                verification_res['confidence'] = int(str(verification_res['root']['confidence']).strip())
+                del verification_res['root']['confidence']
+            elif 'root' in verification_res and 'confidence' in verification_res['root'][0]:
+                verification_res['confidence'] = int(str(verification_res['root'][0]['confidence']).strip())
+                del verification_res['root'][0]['confidence']
 
             print("Response from planning verification: ")
             print(verification_res, flush=True)
