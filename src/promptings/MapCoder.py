@@ -202,7 +202,7 @@ Your response must follow the following xml format - (there should be nothing ou
 # Let's think step by step to solve this problem in {self.language} programming language.
 </code>
 <planning>
-# Planning to solve this problem. Make sure the tags are closed properly.
+# Planning to solve this problem. Make sure the tag is closed properly.
 </planning>
 </problem>
 
@@ -217,8 +217,11 @@ Your response must follow the following xml format - (there should be nothing ou
 """,
             },
         ]
-
-        print("\n\n________________________")
+        
+        print("\n###############################################################")
+        print("######################## Retrieval Agent ######################")
+        print("###############################################################")
+        print("\n\n_______________________________________________________")
         print("Input for knowledge base and exemplars: ")
         print(input_kb_exemplars[0]['content'], flush=True)
 
@@ -241,7 +244,7 @@ Your response must follow the following xml format - (there should be nothing ou
         response = self.replace_tag(response, 'code')
         response = self.replace_tag(response, 'planning')
 
-        print("\n\n________________________")
+        print("\n\n_______________________________________________________")
         print("Response from knowledge base and exemplars: ")
         print(response, flush=True)
         
@@ -267,7 +270,9 @@ Your response must follow the following xml format - (there should be nothing ou
                     "content": f"Given a competitive programming problem generate a concrete planning to solve the problem.\n# Problem:\n{example_problem}\n# Planning:\n{example_planning}\n{algorithm_prompt}\n## Problem to be solved:\n{self.data.get_prompt(item)}\n{sample_io_prompt}\n## Planning:\n\n----------------\nImportant: You should give only the planning to solve the problem. Do not add extra explanation or words."
                 }
             ]
-
+            print("\n###############################################################")
+            print("########################## Planning Agent ######################")
+            print("################################################################")
             print("\n\n________________________")
             print(
                 f"Input for our problem planning using example: {example_no}: ")
@@ -350,7 +355,9 @@ Your response must follow the following xml format - (there should be nothing ou
                     "content": f"Given a competitive programming problem generate {self.language} code to solve the problem.\n{algorithm_prompt}\n## Problem to be solved:\n{self.data.get_prompt(item)}\n## Planning:\n{planning}\n{sample_io_prompt}\n## Let's think step by step.\n\n----------------\nImportant:\n{std_input_prompt}\n## Your response must contain only the {self.language} code to solve this problem. Do not add extra explanation or words."
                 }
             ]
-
+            print("\n###############################################################")
+            print("######################## Coding Agent ##########################")
+            print("################################################################")
             print("\n\n________________________")
             print("Input for final code generation: ")
             print(input_for_final_code_generation[0]['content'], flush=True)
@@ -381,6 +388,10 @@ Your response must follow the following xml format - (there should be nothing ou
 
                 if passed:
                     break
+                
+                print("\n################################################################")
+                print("######################## Debugging Agent ######################")
+                print("###############################################################")
 
                 print(f"Input for improving code generation: {i}")
                 input_for_improving_code = [

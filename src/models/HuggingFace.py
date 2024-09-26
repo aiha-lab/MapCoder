@@ -10,12 +10,14 @@ class HuggingFaceBaseModel(BaseModel):
         model_name='mistralai/Mistral-7B-Instruct-v0.3',
         device=None,
         temperature=0.7,
-        top_p=0.9,
-        max_tokens=32768,
+        top_k=50,
+        top_p=0.95,
+        max_tokens=16384,
     ):
         self.model_name = model_name
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.temperature = temperature
+        self.top_k = top_k
         self.top_p = top_p
         self.max_tokens = max_tokens
 
@@ -38,15 +40,19 @@ class HuggingFaceBaseModel(BaseModel):
             return_dict=True,
             return_tensors="pt",
         ).to(self.device)
+        
         # Set max length
-        # max_length = input_ids.size(1) + self.max_tokens
+        # max_length = prompt_tokens + self.max_tokens
         
         # Generate text
         output_ids = self.model.generate(
             **inputs,
-            max_length=self.max_tokens,
-            # temperature=0.9,
+            max_new_tokens=self.max_tokens,
+            # temperature=self.temperature,
+            top_k=self.top_k,
+            top_p=self.top_p,
             do_sample=True,
+            max_time=180,
             # pad_token_id=self.tokenizer.eos_token_id,
             # eos_token_id=self.tokenizer.eos_token_id,
         )
@@ -71,8 +77,9 @@ class Mistral(HuggingFaceBaseModel):
         model_name='mistralai/Mistral-7B-Instruct-v0.3',
         device=None,
         temperature=0.7,
-        top_p=0.9,
-        max_tokens=32768,
+        top_k=50,
+        top_p=0.95,
+        max_tokens=16384,
     ):
         super().__init__(
             model_name=model_name,
