@@ -3,17 +3,22 @@ import tiktoken
 import os
 import copy
 import time
+import torch
 
 from models.Base import BaseModel
-from datasets.Dataset import Dataset
+from Datasets.Dataset import Dataset
 from results.Results import Results
 from utils.parse import parse_response
+from models.ModelFactory import ModelFactory
 
 
 class BaseStrategy(object):
     def __init__(
         self,
         model: BaseModel,
+        retrieval: str,
+        planning: str,
+        debugging: str,
         data: Dataset,
         language: str,
         pass_at_k: int,
@@ -21,14 +26,31 @@ class BaseStrategy(object):
         verbose: bool = True,
     ):
         self.model = model
+        self.retrieval = retrieval
+        self.planning = planning
+        self.debugging = debugging
         self.data = data
         self.pass_at_k = pass_at_k
         self.results = results
         self.language = language
         self.verbose = verbose
 
+        if self.retrieval != "None" and self.planning != "None" and self.debugging != "None":
+            self.retrieval = self.model if self.retrieval == self.model.id else ModelFactory.get_model_class(self.retrieval)()
+            self.planning = self.model if self.planning == self.model.id else ModelFactory.get_model_class(self.planning)()
+            self.debugging = self.model if self.debugging == self.model.id else ModelFactory.get_model_class(self.debugging)()
+
     def gpt_chat(self, processed_input: List[dict]) -> (str, int, int):
         return self.model.prompt(processed_input=processed_input)
+
+    def gen_retrieval(self, processed_input: List[dict]) -> (str, int, int):
+        return self.retrieval.prompt(processed_input=processed_input)
+
+    def gen_planning(self, processed_input: List[dict]) -> (str, int, int):
+        return self.planning.prompt(processed_input=processed_input)   
+    
+    def gen_debugging(self, processed_input: List[dict]) -> (str, int, int):
+        return self.debugging.prompt(processed_input=processed_input)
 
     def run_single_pass(self, item: dict):
         pass
@@ -36,6 +58,11 @@ class BaseStrategy(object):
     def run(self):
         num_items = len(self.data)
         num_success = 0
+
+        # exist_id = []
+        # for i, item in enumerate(self.results):
+        #     result = self.results[i]
+        #     exist_id.append(result["task_id"])
 
         for i, item in enumerate(self.data):
             print("", flush=True, end="")
@@ -65,8 +92,11 @@ class BaseStrategy(object):
             #         print(f'completed {i+1}/{num_items}, Solved: {is_passing}, number of success = {num_success}/{i+1}, acc = {round(num_success/(i+1)*100, 2)}')
 
             #     continue
+            # import pdb; pdb.set_trace()
 
             if i < len(self.results):
+            # task_id = "HumanEval/" + str(i)
+            # if task_id in exist_id:
                 item = copy.deepcopy(self.results[i])
                 cur_pass = len(item["source_codes"])
                 is_solved = item["is_solved"]
@@ -84,14 +114,18 @@ class BaseStrategy(object):
                 cur_imp = ""
 
             while cur_pass < self.pass_at_k and not is_solved:
-                for _ in range(5):
+                for fail_cnt in range(5):
                     try:
                         response, prompt_tokens, completion_tokens = self.run_single_pass(
                             item)
+                        torch.cuda.empty_cache()
                         break
                     except Exception as e:
                         time.sleep(5)
                         pass
+
+                if fail_cnt == 4:
+                    sys.exit(1)
 
                 if hasattr(self, "parse_code"):
                     cur_imp = self.parse_code(response)

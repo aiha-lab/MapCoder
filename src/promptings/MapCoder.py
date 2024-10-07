@@ -12,12 +12,12 @@ import xml.etree.ElementTree as ET
 from .Base import BaseStrategy
 from models.Base import BaseModel
 
-from datasets.Dataset import Dataset
-from datasets.APPSDataset import APPSDataset
-from datasets.MBPPDataset import MBPPDataset
-from datasets.XCodeDataset import XCodeDataset
-from datasets.HumanEvalDataset import HumanDataset
-from datasets.CodeContestDataset import CodeContestDataset
+from Datasets.Dataset import Dataset
+from Datasets.APPSDataset import APPSDataset
+from Datasets.MBPPDataset import MBPPDataset
+from Datasets.XCodeDataset import XCodeDataset
+from Datasets.HumanEvalDataset import HumanDataset
+from Datasets.CodeContestDataset import CodeContestDataset
 
 from results.Results import Results
 from evaluations.func_evaluate import evaluate_io
@@ -224,8 +224,11 @@ Your response must follow the following xml format - (there should be nothing ou
         print("\n\n_______________________________________________________")
         print("Input for knowledge base and exemplars: ")
         print(input_kb_exemplars[0]['content'], flush=True)
-
-        response, pr_tok, com_tok = self.gpt_chat(
+        # import pdb; pdb.set_trace()
+        # response, pr_tok, com_tok = self.gpt_chat(
+        #     processed_input=input_kb_exemplars
+        # )
+        response, pr_tok, com_tok = self.gen_retrieval(
             processed_input=input_kb_exemplars
         )
         item['api_calls'] = item.get('api_calls', 0) + 1
@@ -278,7 +281,10 @@ Your response must follow the following xml format - (there should be nothing ou
                 f"Input for our problem planning using example: {example_no}: ")
             print(input_for_problem_planning[0]['content'], flush=True)
 
-            planning, pr_tok_1, com_tok_1 = self.gpt_chat(
+            # planning, pr_tok_1, com_tok_1 = self.gpt_chat(
+            #     input_for_problem_planning
+            # )
+            planning, pr_tok_1, com_tok_1 = self.gen_planning(
                 input_for_problem_planning
             )
             item['api_calls'] += 1
@@ -303,7 +309,10 @@ Your response must follow the following xml format - (there should be nothing ou
             print("Input for planning verification: ")
             print(input_for_planning_verification[0]['content'], flush=True)
 
-            verification_res, pr_tok_1, com_tok_1 = self.gpt_chat(
+            # verification_res, pr_tok_1, com_tok_1 = self.gpt_chat(
+            #     input_for_planning_verification
+            # )
+            verification_res, pr_tok_1, com_tok_1 = self.gen_planning(
                 input_for_planning_verification
             )
             item['api_calls'] += 1
@@ -405,7 +414,10 @@ Your response must follow the following xml format - (there should be nothing ou
                 print("Input for improving code generation: ")
                 print(input_for_improving_code[0]['content'], flush=True)
 
-                response, pr_tok_1, com_tok_1 = self.gpt_chat(
+                # response, pr_tok_1, com_tok_1 = self.gpt_chat(
+                #     input_for_improving_code
+                # )
+                response, pr_tok_1, com_tok_1 = self.gen_debugging(
                     input_for_improving_code
                 )
                 item['api_calls'] += 1

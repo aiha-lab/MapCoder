@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from .Base import BaseStrategy
 from models.Base import BaseModel
-from datasets.Dataset import Dataset
+from Datasets.Dataset import Dataset
 from results.Results import Results
 
 # self-generate exemplars and knowledge

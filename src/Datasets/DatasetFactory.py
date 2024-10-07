@@ -1,9 +1,9 @@
-from datasets.Dataset import Dataset
-from datasets.MBPPDataset import MBPPDataset
-from datasets.APPSDataset import APPSDataset
-from datasets.XCodeDataset import XCodeDataset
-from datasets.HumanEvalDataset import HumanDataset
-from datasets.CodeContestDataset import CodeContestDataset
+from Datasets.Dataset import Dataset
+from Datasets.MBPPDataset import MBPPDataset
+from Datasets.APPSDataset import APPSDataset
+from Datasets.XCodeDataset import XCodeDataset
+from Datasets.HumanEvalDataset import HumanDataset
+from Datasets.CodeContestDataset import CodeContestDataset
 
 
 class DatasetFactory:

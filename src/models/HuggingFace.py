@@ -8,6 +8,7 @@ class HuggingFaceBaseModel(BaseModel):
     def __init__(
         self,
         model_name='mistralai/Mistral-7B-Instruct-v0.3',
+        id="Mistral",
         device=None,
         temperature=0.7,
         top_k=50,
@@ -15,6 +16,7 @@ class HuggingFaceBaseModel(BaseModel):
         max_tokens=16384,
     ):
         self.model_name = model_name
+        self.id = id
         self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self.temperature = temperature
         self.top_k = top_k
@@ -22,9 +24,23 @@ class HuggingFaceBaseModel(BaseModel):
         self.max_tokens = max_tokens
 
         # Load model and tokenizer
+        # import pdb; pdb.set_trace()
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
-        self.model.to(self.device)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            self.model_name, 
+            device_map="auto", 
+            torch_dtype="auto"
+        )
+        # self.model.to(self.device)
+        # self.model.parallelize()
+
+    # def load_model(model_name):
+    #     self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+    #     self.model = AutoModelForCausalLM.from_pretrained(
+    #         self.model_name,
+    #         device_map="auto",
+    #         torch_dtype="auto"
+    #         )
 
     def prompt(self, processed_input: list[dict]):
         # Generate prompt text
@@ -75,6 +91,7 @@ class Mistral(HuggingFaceBaseModel):
     def __init__(
         self,
         model_name='mistralai/Mistral-7B-Instruct-v0.3',
+        id="Mistral",
         device=None,
         temperature=0.7,
         top_k=50,
@@ -83,6 +100,47 @@ class Mistral(HuggingFaceBaseModel):
     ):
         super().__init__(
             model_name=model_name,
+            id=id,
+            device=device,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+       )
+
+class Qwen(HuggingFaceBaseModel):
+    def __init__(
+        self,
+        model_name='Qwen/Qwen2.5-32B-Instruct',
+        id='Qwen',
+        device=None,
+        temperature=0.7,
+        top_k=50,
+        top_p=0.95,
+        max_tokens=16384,
+    ):
+        super().__init__(
+            model_name=model_name,
+            id=id,
+            device=device,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+       )
+
+class QwenGPTQ(HuggingFaceBaseModel):
+    def __init__(
+        self,
+        model_name='Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4',
+        id='QwenGPTQ',
+        device=None,
+        temperature=0.7,
+        top_k=50,
+        top_p=0.95,
+        max_tokens=16384,
+    ):
+        super().__init__(
+            model_name=model_name,
+            id=id,
             device=device,
             temperature=temperature,
             top_p=top_p,
